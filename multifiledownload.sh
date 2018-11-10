@@ -1,2 +1,2 @@
-#!/usr/bin/env bash
+#!/bin/bash
 java -jar bin/multi-filedownloader.jar "$1" "$2"
