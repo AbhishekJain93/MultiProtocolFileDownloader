@@ -1,6 +1,11 @@
 ## File downloader
 Program to download the files given at the URLs. It supports **file, ftp, http, https, jar, mailto, netdoc** protocols out of the box as these are by default registered with jvm. The code could be extended to custom protocols, and one example **(rot13)** has been provided.
 
+1. The program uses Spring Retry to apply retry logic in case of Connection Timeout and IOException.
+2. The program takes advantage of Java's Completable Future to download all the input urls in parallel.
+
+
+
 ### Using script
 
   1. Pull the repository.
@@ -42,6 +47,76 @@ sh update-jar.sh
 Feel free to request to push the code to this repository if you want to add a feature or improve existing 
 modules. Test your changes through unit and integration tests wherever appropriate. 
 
+### Using Spring Retry
+
+```
+
+ public RetryTemplate retryTemplate() {
+        RetryTemplate retryTemplate = new RetryTemplate();
+
+        retryTemplate.registerListener(new RetryDownloadListener());
+
+        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
+        exponentialBackOffPolicy.setMultiplier(2.0D);
+        exponentialBackOffPolicy.setInitialInterval(100L);
+        exponentialBackOffPolicy.setMaxInterval(30000L);
+        retryTemplate.setBackOffPolicy(exponentialBackOffPolicy);
+
+        Map<Class<? extends Throwable>, Boolean> exceptionClassifier = new HashMap<>();
+        exceptionClassifier.put(IOException.class, true);
+
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(maxRetryAttempts, exceptionClassifier);
+
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        return retryTemplate;
+    }
+    
+retryTemplate.execute(
+                    arg -> downloadAndSave(source, outputDirectory),
+                    arg -> {
+
+                        fileDownloaderUtils.deleteFileQuietly(source, outputDirectory);
+                        log.error(
+                                "Retry attempts exhausted to " +
+                                        "download from sources: {}." +
+                                        "Hence deleting the temp/partially downloaded file and returning as ERROR",
+                                source);
+
+                        return new FileDownloadResult()
+                                .setDownloadStatusStatus(DownloadStatus
+                                                                 .ERROR)
+                                .setMessage("RetryAttemptsExhausted");
+
+                    });
+```
+
+### Asynchronous processing using Completable Future
+```
+threadExecutor = new ThreadPoolExecutor(poolSize,
+                                                poolSize, 1000, TimeUnit
+                                                        .MILLISECONDS, new
+                                                        LinkedBlockingQueue<>(100),
+                                                new ThreadPoolExecutor
+                                                        .CallerRunsPolicy());
+private CompletableFuture<FileDownloadResult> downloadAndSaveTask(String source, String saveDirectory) {
+
+        return CompletableFuture.supplyAsync(
+                () -> downloadManager.downloadFromSource(source, saveDirectory),
+                threadExecutor);
+
+    }
+    
+ CompletableFuture.allOf(
+                validSources
+                        .stream().map(source -> downloadAndSaveTask(source, outputDirectory)).toArray
+                        (CompletableFuture[]::new)
+        )
+                .thenAccept(result -> {
+                    log.info("Download of all the sources have been completed/terminated. Program would exit now");
+                    threadExecutor.shutdownNow();
+                });    
+```
 ### Extending to other protocols
 
 1. Create a custom URLConnection implementation which performs the job in connect() method.
