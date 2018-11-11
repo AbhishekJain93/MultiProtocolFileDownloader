@@ -19,6 +19,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
+/**
+ * The implementation class that performs core IO for downloading tasks
+ * and wraps the retry logic over it.
+ */
 @Service("RetryableDownloadManager")
 public class RetryableDownloadManagerImpl implements DownloadManager {
     private static final Logger log = LoggerFactory.getLogger(RetryableDownloadManagerImpl.class);
@@ -30,6 +34,15 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
     @Autowired
     private FileDownloaderUtils fileDownloaderUtils;
 
+    /**
+     * The method wraps the downloading IO logic with Spring-Retry template.
+     * This allows for retrying over the specified time in case of execeptions like
+     * {@code {@link java.net.ConnectException}, {@link} {@link IOException}}
+     *
+     * @param source          Source url to download the file from
+     * @param outputDirectory The final directory to save the downloaded file
+     * @return @{@link FileDownloadResult} Final result od downloading the file
+     */
     @Override
     public FileDownloadResult downloadFromSource(String source, String outputDirectory) {
 
@@ -62,13 +75,32 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
 
     }
 
+    /**
+     * The method employs the java NIO package for downloading the files.
+     * <p>
+     *      The Java NIO package offers the possibility to transfer bytes between 2 Channels without buffering them into
+     *      the application memory.
+     *
+     *      The transferTo() and transferFrom() methods are more efficient than simply reading from a stream using a
+     *      buffer. Depending on the underlying operating system, the data can be transferred directly from the filesystem
+     *      cache to our file without copying any bytes into the application memory.
+     *
+     *      On Linux and UNIX systems, these methods use the zero-copy technique that reduces the number of context
+     *      switches between the kernel mode and user mode.
+     * </p>
+     *
+     * @param source          Source url to download the file from
+     * @param outputDirectory The final directory to save the downloaded file
+     * @return @{@link FileDownloadResult} Final result od downloading the file
+     * @throws IOException
+     */
     private FileDownloadResult downloadAndSave(String source, String outputDirectory) throws IOException {
 
         URL sourceUrl = new URL(source);
         String downloadFileName = fileDownloaderUtils.uniqueFileSaveLocation(sourceUrl, outputDirectory);
 
-        FileOutputStream fileOutputStream = new FileOutputStream(downloadFileName);
         FileUtils.touch(new File(downloadFileName));
+        FileOutputStream fileOutputStream = new FileOutputStream(downloadFileName);
 
         try (ReadableByteChannel readableByteChannel = Channels.newChannel(fileDownloaderUtils.openStream(sourceUrl))
              ; FileChannel fileChannel = fileOutputStream.getChannel()) {
@@ -84,7 +116,7 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
 
         }
 
-        log.info("Download for source: {} completed successfully", source);
+        log.info("Download for source: {} completed successfully at path: {}", source, downloadFileName);
         return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED).setMessage("Download " +
                                                                                                              "completed for source: " + source);
     }

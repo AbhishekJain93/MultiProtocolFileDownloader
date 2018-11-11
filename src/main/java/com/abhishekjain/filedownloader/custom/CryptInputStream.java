@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * The {@link InputStream} sub class to encapsulate the logic
+ * to encode using rot13[rotate-13]
+ * and would be used by custom {@link CryptURLConnection}
+ */
 abstract class CryptInputStream extends InputStream {
     InputStream in;
     OutputStream out;

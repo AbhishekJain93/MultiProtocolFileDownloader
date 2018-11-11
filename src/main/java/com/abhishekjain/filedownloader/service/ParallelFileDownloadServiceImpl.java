@@ -20,6 +20,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of @{@link FileDownloadService}
+ * This implementation creates @{@link CompletableFuture} of the download tasks
+ * and submits them to be <i>processed in parallel</i>.
+ */
 @Service
 public class ParallelFileDownloadServiceImpl implements FileDownloadService {
     private static final Logger log = LoggerFactory.getLogger(ParallelFileDownloadServiceImpl.class);
@@ -39,6 +44,11 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
 
     private ThreadPoolExecutor threadExecutor;
 
+    /**
+     * Initialises the thread pool that controls the number of workers available
+     * for the download tasks. Property {@link #poolSize} is used to configure
+     * the thread pool size.
+     */
     @PostConstruct
     private void init() {
 
@@ -52,6 +62,12 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
         log.info("Initialized task pool [for parallel download] of size :{}", poolSize);
     }
 
+    /**
+     * The method takes the input url sources and prepares them to be downloaded in parallel.
+     *
+     * @param sources         The Url sources from where to download from.
+     * @param outputDirectory The final directory where the downloaded files would be saved
+     */
     @Override
     public void downloadFilesFromSources(List<String> sources, String outputDirectory) {
 
@@ -64,7 +80,8 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
 
         CompletableFuture.allOf(
                 validSources
-                        .stream().map(source -> downloadAndSaveTask(source, outputDirectory)).toArray(CompletableFuture[]::new)
+                        .stream().map(source -> downloadAndSaveTask(source, outputDirectory)).toArray
+                        (CompletableFuture[]::new)
         )
                 .thenAccept(result -> {
                     log.info("Download of all the sources have been completed/terminated. Program would exit now");

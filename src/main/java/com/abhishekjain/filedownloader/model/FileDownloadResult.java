@@ -1,5 +1,10 @@
 package com.abhishekjain.filedownloader.model;
 
+/**
+ * The result/response class that contains:
+ * 1) @{@link DownloadStatus} Status of the download task
+ * 2) {@link #message} Message/Exception code
+ */
 public class FileDownloadResult {
 
     private DownloadStatus downloadStatusStatus;

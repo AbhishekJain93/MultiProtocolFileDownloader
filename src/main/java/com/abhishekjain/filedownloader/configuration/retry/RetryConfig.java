@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuration class to register retry and backoff policy for retry template {@link RetryTemplate}
+ */
 @Configuration
 class RetryConfig {
 

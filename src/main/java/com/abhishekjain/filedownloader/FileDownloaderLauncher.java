@@ -21,6 +21,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Main Launcher class that contains the main method
+ * and parses the arguments passed to the application.
+ */
+
 @EnableRetry
 @EnableAspectJAutoProxy
 @SpringBootApplication
@@ -36,15 +41,32 @@ public class FileDownloaderLauncher implements ApplicationRunner {
     private
     FileDownloadService fileDownloadService;
 
+    /**
+     * Main method that gets invoked when application is run.
+     * <pre>
+     *   URL.setURLStreamHandlerFactory(new OurURLStreamHandlerFactory());
+     * </pre>
+     * This line is called to register the custom Protocol Handler to the application
+     *
+     * @param args Application arguments passed [--urls , --directory]
+     */
     public static void main(String[] args) {
 
         URL.setURLStreamHandlerFactory(new OurURLStreamHandlerFactory());
-        
+
         new SpringApplicationBuilder(FileDownloaderLauncher.class)
                 .web(WebApplicationType.NONE)
                 .run(args);
     }
 
+    /**
+     * The @{@link ApplicationRunner} interface method.
+     * The urls of the sources are parsed from --urls argument
+     * The save directory is parsed from --directory argument. If not passed then
+     * #getDefaultDirectory() is used for saving the downloads.
+     *
+     * @param args
+     */
     @Override
     public void run(ApplicationArguments args) {
 
@@ -59,6 +81,9 @@ public class FileDownloaderLauncher implements ApplicationRunner {
         if (!CollectionUtils.isEmpty(urls)) {
             fileDownloadService.downloadFilesFromSources(urls, StringUtils.isBlank(outputDirectory) ? downloaderConfig
                     .getDefaultDirectory() : outputDirectory);
+
+        } else {
+            log.info("No source has been provided to download. Program would exit now");
         }
     }
 

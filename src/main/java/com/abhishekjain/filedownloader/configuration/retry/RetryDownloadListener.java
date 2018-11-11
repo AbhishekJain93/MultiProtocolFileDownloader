@@ -6,6 +6,9 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.listener.RetryListenerSupport;
 
+/**
+ * Cross cutting class to log the retry attempts for downloading the file
+ */
 public class RetryDownloadListener extends RetryListenerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(RetryDownloadListener.class);

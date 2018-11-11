@@ -1,22 +1,28 @@
 package com.abhishekjain.filedownloader.custom;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
+/**
+ * Custom Handler called to parseUrl
+ * and open the connection for streams to work
+ */
 public class Handler extends URLStreamHandler {
 
     protected void parseURL(URL url, String spec,
                             int start, int end) {
         int slash = spec.indexOf('/');
-        String crypType = spec.substring(start, slash-1);
+        String cryptType = spec.substring(0, slash - 1);
         super.parseURL(url, spec, slash, end);
-        setURL( url, "crypt:"+crypType, url.getHost( ),
-                url.getPort(), url.getFile(), url.getRef( ) );
+        setURL(url, cryptType, url.getHost(),
+               url.getPort(), url.getAuthority(), url.getUserInfo(), url.getPath(), url.getQuery(), url.getRef());
     }
 
     protected URLConnection openConnection(URL url)
             throws IOException {
-        String crypType = url.getProtocol( ).substring(6);
-        return new CryptURLConnection( url, crypType );
+        String crypType = url.getProtocol();
+        return new CryptURLConnection(url, crypType);
     }
 }

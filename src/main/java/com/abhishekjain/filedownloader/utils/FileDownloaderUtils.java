@@ -37,6 +37,25 @@ public class FileDownloaderUtils {
 
     }
 
+    /**
+     * Gets the unique path to save file at.
+     *
+     * <p>
+     * Example URL: https://raw.githubusercontent.com/neovim/neovim/master/runtime/doc/filetype.txt
+     * <p>
+     * Downloaded file will be saved at
+     * <b><saveDirectory>/<sha1hex>_<filename></b>
+     * where sha1hex is the unique SHA-1 hash constituted from the URL. From example: https
+     * host is the host of the protocol.
+     * From example: filetype.txt file is the filename in the URL.
+     *
+     * <i>Note that: 80 is the default port in http. </i>
+     * </p>
+     *
+     * @param sourceUrl,     the URL file belongs to.
+     * @param saveDirectory, the Base directory to create file in.
+     * @return path to store file at in the localhost.
+     */
     public String uniqueFileSaveLocation(URL sourceUrl, String saveDirectory) {
 
         return saveDirectory.concat(File.separator).concat(uniqueFilenameForSource(sourceUrl));
@@ -61,6 +80,14 @@ public class FileDownloaderUtils {
 
     }
 
+    /**
+     * The method opens the stream from the URL setting the connection and
+     * read timeout from properties file.
+     *
+     * @param url Url from where stream is to be obtained
+     * @return @{@link InputStream} from the url provided
+     * @throws IOException If stream can not be obtained
+     */
     public InputStream openStream(URL url) throws IOException {
 
         URLConnection conn = url.openConnection();
@@ -71,6 +98,13 @@ public class FileDownloaderUtils {
         return conn.getInputStream();
     }
 
+    /**
+     * Deletes the file provided at #outputDirectory silently.
+     * Deletes a file, never throwing an exception. If file is a directory, delete it and all sub-directories.
+     *
+     * @param source
+     * @param outputDirectory
+     */
     public void deleteFileQuietly(String source, String outputDirectory) {
 
         URL sourceUrl;
