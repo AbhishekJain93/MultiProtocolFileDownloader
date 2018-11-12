@@ -28,8 +28,7 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
     private static final Logger log = LoggerFactory.getLogger(RetryableDownloadManagerImpl.class);
 
     @Autowired
-    private
-    RetryTemplate retryTemplate;
+    private RetryTemplate retryTemplate;
 
     @Autowired
     private FileDownloaderUtils fileDownloaderUtils;
@@ -78,15 +77,15 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
     /**
      * The method employs the java NIO package for downloading the files.
      * <p>
-     *      The Java NIO package offers the possibility to transfer bytes between 2 Channels without buffering them into
-     *      the application memory.
-     *
-     *      The transferTo() and transferFrom() methods are more efficient than simply reading from a stream using a
-     *      buffer. Depending on the underlying operating system, the data can be transferred directly from the filesystem
-     *      cache to our file without copying any bytes into the application memory.
-     *
-     *      On Linux and UNIX systems, these methods use the zero-copy technique that reduces the number of context
-     *      switches between the kernel mode and user mode.
+     * The Java NIO package offers the possibility to transfer bytes between 2 Channels without buffering them into
+     * the application memory.
+     * <p>
+     * The transferTo() and transferFrom() methods are more efficient than simply reading from a stream using a
+     * buffer. Depending on the underlying operating system, the data can be transferred directly from the filesystem
+     * cache to our file without copying any bytes into the application memory.
+     * <p>
+     * On Linux and UNIX systems, these methods use the zero-copy technique that reduces the number of context
+     * switches between the kernel mode and user mode.
      * </p>
      *
      * @param source          Source url to download the file from
@@ -96,7 +95,19 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
      */
     private FileDownloadResult downloadAndSave(String source, String outputDirectory) throws IOException {
 
-        URL sourceUrl = new URL(source);
+        URL sourceUrl;
+
+        //Not retrying if URL is malformed as it is type of non-retryable exception
+        try {
+            sourceUrl = new URL(source);
+        } catch (MalformedURLException e) {
+
+            log.error("Unable to download file: {} due to invalid/malformed source. Exception: {}", source, e
+                    .getMessage());
+            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR).setMessage("MalformedURL");
+
+        }
+
         String downloadFileName = fileDownloaderUtils.uniqueFileSaveLocation(sourceUrl, outputDirectory);
 
         FileUtils.touch(new File(downloadFileName));
@@ -107,12 +118,6 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
 
             fileChannel
                     .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-
-        } catch (MalformedURLException e) {
-
-            log.error("Unable to download file: {} due to invalid/malformed source. Exception: {}", source, e
-                    .getMessage());
-            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR).setMessage("MalformedURL");
 
         }
 

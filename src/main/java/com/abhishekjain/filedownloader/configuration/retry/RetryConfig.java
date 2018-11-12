@@ -3,7 +3,7 @@ package com.abhishekjain.filedownloader.configuration.retry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
@@ -26,11 +26,13 @@ class RetryConfig {
 
         retryTemplate.registerListener(new RetryDownloadListener());
 
-        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
-        exponentialBackOffPolicy.setMultiplier(2.0D);
-        exponentialBackOffPolicy.setInitialInterval(100L);
-        exponentialBackOffPolicy.setMaxInterval(30000L);
-        retryTemplate.setBackOffPolicy(exponentialBackOffPolicy);
+        /* Exponential Backoff Strategy can also be used.{@link ExponentialBackOffPolicy}.
+        A common use case is to
+        backoff with an exponentially increasing wait period, to avoid two retries getting into lock step */
+        
+        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(2000l);
+        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
 
         Map<Class<? extends Throwable>, Boolean> exceptionClassifier = new HashMap<>();
         exceptionClassifier.put(IOException.class, true);

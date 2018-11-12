@@ -5,7 +5,17 @@ Program to download the files given at the URLs. It supports **file, ftp, http, 
 2. The program takes advantage of Java's Completable Future to download all the input urls in parallel.
 
 
+The program employs the java NIO package for downloading the files. According to [https://docs.oracle.com/javase/8/docs/api/java/io/package-summary.html]
+>The Java NIO package offers the possibility to transfer bytes between 2 Channels without buffering them into
+           the application memory.
+The transferTo() and transferFrom() methods are more efficient than simply reading from a stream using a
+           buffer. Depending on the underlying operating system, the data can be transferred directly from the filesystem
+           cache to our file without copying any bytes into the application memory.
+      On Linux and UNIX systems, these methods use the zero-copy technique that reduces the number of context
+           switches between the kernel mode and user mode.
 
+
+> We could have also used Apache Commons IO's  IOUtils.copyLarge() method
 ### Using script
 
   1. Pull the repository.

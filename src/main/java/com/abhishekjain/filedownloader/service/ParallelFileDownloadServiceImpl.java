@@ -30,9 +30,6 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
     private static final Logger log = LoggerFactory.getLogger(ParallelFileDownloadServiceImpl.class);
 
     @Autowired
-    FileDownloaderConfig downloaderConfig;
-
-    @Autowired
     private FileDownloaderUtils fileDownloaderUtils;
 
     @Autowired
@@ -50,7 +47,7 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
      * the thread pool size.
      */
     @PostConstruct
-    private void init() {
+    protected void init() {
 
         threadExecutor = new ThreadPoolExecutor(poolSize,
                                                 poolSize, 1000, TimeUnit

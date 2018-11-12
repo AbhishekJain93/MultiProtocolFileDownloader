@@ -63,6 +63,7 @@ public class FileDownloaderUtils {
 
     private String uniqueFilenameForSource(URL url) {
 
+        //TODO: ABJ 12112018 Use URL normalization and then sha1hex
         StringBuilder filenameBuilder = new StringBuilder();
         filenameBuilder.append(url.getProtocol())
                 .append('-')
