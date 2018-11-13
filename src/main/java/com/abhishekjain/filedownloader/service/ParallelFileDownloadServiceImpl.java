@@ -1,6 +1,5 @@
 package com.abhishekjain.filedownloader.service;
 
-import com.abhishekjain.filedownloader.configuration.FileDownloaderConfig;
 import com.abhishekjain.filedownloader.manager.DownloadManager;
 import com.abhishekjain.filedownloader.model.FileDownloadResult;
 import com.abhishekjain.filedownloader.utils.FileDownloaderUtils;
@@ -66,28 +65,31 @@ public class ParallelFileDownloadServiceImpl implements FileDownloadService {
      * @param outputDirectory The final directory where the downloaded files would be saved
      */
     @Override
-    public void downloadFilesFromSources(List<String> sources, String outputDirectory) {
+    public void downloadFilesFromSources(final List<String> sources, final String outputDirectory) {
 
-        List<String> validSources = sources.stream().filter(url -> fileDownloaderUtils.isValidUrl(url)).collect
-                (Collectors
-                         .toList());
+        List<String> validSources = sources.stream()
+                                           .filter(url -> fileDownloaderUtils.isValidUrl(url))
+                                           .collect(Collectors.toList());
 
         log.warn("Invalid/Malformed sources that won't be attempted for download : {}", CollectionUtils.subtract
                 (sources, validSources));
 
         CompletableFuture.allOf(
                 validSources
-                        .stream().map(source -> downloadAndSaveTask(source, outputDirectory)).toArray
-                        (CompletableFuture[]::new)
+                        .stream()
+                        .map(source -> downloadAndSaveTask(source, outputDirectory))
+                        .toArray
+                                (CompletableFuture[]::new)
         )
-                .thenAccept(result -> {
-                    log.info("Download of all the sources have been completed/terminated. Program would exit now");
-                    threadExecutor.shutdownNow();
-                });
+                         .thenAccept(result -> {
+                             log.info("Download of all the sources have been completed/terminated. Program would exit" +
+                                              " now");
+                             threadExecutor.shutdownNow();
+                         });
 
     }
 
-    private CompletableFuture<FileDownloadResult> downloadAndSaveTask(String source, String saveDirectory) {
+    private CompletableFuture<FileDownloadResult> downloadAndSaveTask(final String source, final String saveDirectory) {
 
         return CompletableFuture.supplyAsync(
                 () -> downloadManager.downloadFromSource(source, saveDirectory),

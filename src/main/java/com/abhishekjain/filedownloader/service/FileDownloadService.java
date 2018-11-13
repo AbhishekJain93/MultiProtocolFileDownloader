@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface FileDownloadService {
 
-    void downloadFilesFromSources(List<String> sources, String outputDirectory);
+    void downloadFilesFromSources(final List<String> sources, final String outputDirectory);
 }

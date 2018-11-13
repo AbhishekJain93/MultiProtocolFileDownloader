@@ -68,8 +68,9 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
                       e.getMessage());
 
             fileDownloaderUtils.deleteFileQuietly(source, outputDirectory);
-            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR).setMessage
-                    (e.getMessage());
+            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR)
+                                           .setMessage
+                                                   (e.getMessage());
         }
 
     }
@@ -104,7 +105,8 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
 
             log.error("Unable to download file: {} due to invalid/malformed source. Exception: {}", source, e
                     .getMessage());
-            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR).setMessage("MalformedURL");
+            return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.ERROR)
+                                           .setMessage("MalformedURL");
 
         }
 
@@ -122,8 +124,9 @@ public class RetryableDownloadManagerImpl implements DownloadManager {
         }
 
         log.info("Download for source: {} completed successfully at path: {}", source, downloadFileName);
-        return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED).setMessage("Download " +
-                                                                                                             "completed for source: " + source);
+        return new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED)
+                                       .setMessage("Download " +
+                                                           "completed for source: " + source);
     }
 
 }

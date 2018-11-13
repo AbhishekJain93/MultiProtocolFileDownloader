@@ -1,4 +1,4 @@
-## File downloader
+## About Multi Protocol File downloader
 Program to download the files given at the URLs. It supports **file, ftp, http, https, jar, mailto, netdoc** protocols out of the box as these are by default registered with jvm. The code could be extended to custom protocols, and one example **(rot13)** has been provided.
 
 1. The program uses Spring Retry to apply retry logic in case of Connection Timeout and IOException.
@@ -16,7 +16,7 @@ The transferTo() and transferFrom() methods are more efficient than simply readi
 
 
 > We could have also used Apache Commons IO's  IOUtils.copyLarge() method
-### Using script
+### Using bash script for easy usage
 
   1. Pull the repository.
   2. Run the following command from the directory you pulled code to:
@@ -359,10 +359,18 @@ This section shows how we can extend the code to download files from other custo
     c, addr = s.accept()
     print 'Got connection from', addr
  
-    # send a thank you message to the client.  
+    # send a thank you message to the client.
+    #"Why did the chicken cross the road?" ->  "Jul qvq gur puvpxra pebff gur ebnq?" [rot13 applied string] 
     c.send('Jul qvq gur puvpxra pebff gur ebnq?')
  
     # Close the connection with the client 
     c.close()
      
   ```   
+###Adding Unit Tests 
+Unit Tests are added covering
+* File Utils [Utility file for file downlaods]
+* Download Service Layer [making Sure downloads are done in parallel]
+* Download Manager [Along with Retry Logic]
+* Exception Cases like MalformedURLException, IOException
+* Custom Test Cases could be added to test custom protocols.

@@ -20,18 +20,21 @@ class RetryConfig {
     @Value("${download.retry.count}")
     private int maxRetryAttempts;
 
+    @Value("${download.retry.interval}")
+    private long backoffInterval;
+
     @Bean
     public RetryTemplate retryTemplate() {
-        RetryTemplate retryTemplate = new RetryTemplate();
+        final RetryTemplate retryTemplate = new RetryTemplate();
 
         retryTemplate.registerListener(new RetryDownloadListener());
 
         /* Exponential Backoff Strategy can also be used.{@link ExponentialBackOffPolicy}.
         A common use case is to
         backoff with an exponentially increasing wait period, to avoid two retries getting into lock step */
-        
-        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
-        fixedBackOffPolicy.setBackOffPeriod(2000l);
+
+        final FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(backoffInterval);
         retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
 
         Map<Class<? extends Throwable>, Boolean> exceptionClassifier = new HashMap<>();

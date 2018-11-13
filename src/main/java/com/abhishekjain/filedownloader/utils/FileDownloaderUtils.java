@@ -58,7 +58,8 @@ public class FileDownloaderUtils {
      */
     public String uniqueFileSaveLocation(URL sourceUrl, String saveDirectory) {
 
-        return saveDirectory.concat(File.separator).concat(uniqueFilenameForSource(sourceUrl));
+        return saveDirectory.concat(File.separator)
+                            .concat(uniqueFilenameForSource(sourceUrl));
     }
 
     private String uniqueFilenameForSource(URL url) {
@@ -66,18 +67,19 @@ public class FileDownloaderUtils {
         //TODO: ABJ 12112018 Use URL normalization and then sha1hex
         StringBuilder filenameBuilder = new StringBuilder();
         filenameBuilder.append(url.getProtocol())
-                .append('-')
-                .append(url.getPort() == -1 ? url.getDefaultPort() : url.getPort())
-                .append('-')
-                .append(url.getHost())
-                .append('-')
-                .append(url.getPath());
+                       .append('-')
+                       .append(url.getPort() == -1 ? url.getDefaultPort() : url.getPort())
+                       .append('-')
+                       .append(url.getHost())
+                       .append('-')
+                       .append(url.getPath());
         if (StringUtils.isEmpty(url.getPath())) {
             filenameBuilder.deleteCharAt(filenameBuilder.length() - 1);
         }
 
         return DigestUtils.sha1Hex(filenameBuilder.toString())
-                .concat("_").concat(FilenameUtils.getName(url.getPath()));
+                          .concat("_")
+                          .concat(FilenameUtils.getName(url.getPath()));
 
     }
 

@@ -31,6 +31,7 @@ import java.util.List;
 @SpringBootApplication
 public class FileDownloaderLauncher implements ApplicationRunner {
 
+    private static final String WHITESPACE_REGEX = "\\s+";
     private static final Logger log = LoggerFactory.getLogger(FileDownloaderLauncher.class);
 
     @Autowired
@@ -70,9 +71,11 @@ public class FileDownloaderLauncher implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-        List<String> urls = urlSources(args.getOptionValues("urls"));
-        String outputDirectory = CollectionUtils.isEmpty(args.getOptionValues("directory")) ? "" : args.getOptionValues
-                ("directory").get(0);
+        final List<String> urls = urlSources(args.getOptionValues("urls"));
+        final String outputDirectory = CollectionUtils.isEmpty(args.getOptionValues("directory")) ? "" : args
+                .getOptionValues
+                        ("directory")
+                .get(0);
 
         log.info("Default directory to download files is set : {}", downloaderConfig.getDefaultDirectory());
         log.info("Overriding directory passed : {}", outputDirectory);
@@ -87,13 +90,9 @@ public class FileDownloaderLauncher implements ApplicationRunner {
         }
     }
 
-    private List<String> urlSources(List<String> arg) {
-
-        if (CollectionUtils.isEmpty(arg)) {
-            return Collections.emptyList();
-        }
-
-        return Arrays.asList(arg.get(0).split("\\s+"));
+    private List<String> urlSources(final List<String> arg) {
+        return CollectionUtils.isEmpty(arg) ? Collections.emptyList() : Arrays.asList(arg.get(0)
+                                                                                         .split(WHITESPACE_REGEX));
 
     }
 

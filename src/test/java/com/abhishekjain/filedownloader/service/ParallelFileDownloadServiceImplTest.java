@@ -59,8 +59,9 @@ public class ParallelFileDownloadServiceImplTest {
     public void downloadFilesFromSources_valid_test() {
 
         when(downloadManager.downloadFromSource(anyString(), anyString()))
-                .thenReturn(new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED).setMessage
-                        ("Done"));
+                .thenReturn(new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED)
+                                                    .setMessage
+                                                            ("Done"));
 
         when(fileDownloaderUtils.isValidUrl(anyString())).thenReturn(true);
 
@@ -76,8 +77,9 @@ public class ParallelFileDownloadServiceImplTest {
     public void downloadFilesFromSources_no_url_passed_test() throws MalformedURLException {
 
         when(downloadManager.downloadFromSource(anyString(), anyString()))
-                .thenReturn(new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED).setMessage
-                        ("Done"));
+                .thenReturn(new FileDownloadResult().setDownloadStatusStatus(DownloadStatus.COMPLETED)
+                                                    .setMessage
+                                                            ("Done"));
 
         when(fileDownloaderUtils.isValidUrl(anyString())).thenReturn(true);
 
