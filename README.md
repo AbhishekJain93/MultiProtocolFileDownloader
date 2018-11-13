@@ -366,11 +366,12 @@ This section shows how we can extend the code to download files from other custo
     # Close the connection with the client 
     c.close()
      
-  ```   
-###Adding Unit Tests 
+  ``` 
+  
+### Adding Unit Tests 
 Unit Tests are added covering
-* File Utils [Utility file for file downlaods]
-* Download Service Layer [making Sure downloads are done in parallel]
-* Download Manager [Along with Retry Logic]
-* Exception Cases like MalformedURLException, IOException
+* File Utils **[Utility file for file downlaods]**
+* Download Service Layer **[making Sure downloads are done in parallel]**
+* Download Manager **[Along with Retry Logic]**
+* Exception Cases like **MalformedURLException, IOException**
 * Custom Test Cases could be added to test custom protocols.
