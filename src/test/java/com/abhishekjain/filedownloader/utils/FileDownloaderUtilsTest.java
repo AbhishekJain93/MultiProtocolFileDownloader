@@ -113,7 +113,7 @@ public class FileDownloaderUtilsTest {
     @Test(expected = ConnectException.class)
     public void openStream_invalid_test() throws IOException {
 
-        downloaderUtils.openStream(new URL(("http://localhost:8000/sample.pdf")));
+        downloaderUtils.openStream(new URL(("http://localhost:8090/sample.pdf")));
 
     }
 

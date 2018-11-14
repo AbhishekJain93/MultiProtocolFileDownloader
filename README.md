@@ -26,7 +26,7 @@ The transferTo() and transferFrom() methods are more efficient than simply readi
      ```
      Example:
      ```
-     ./multifiledownload.sh --urls="http://www.africau.edu/images/default/sample.pdf rot13://localhost:8000" --directory="downloaded"
+     ./multifiledownload.sh --urls="http://www.africau.edu/images/default/sample.pdf rot13://localhost:8000  http://insight.dev.schoolwires.com/HelpAssets/C2Assets/C2Files/C2ImportFamRelSample.csv" --directory="downloaded"
      ```
      
      File is created at \<base directory\> / \<smart file name\>. Where:
@@ -368,10 +368,10 @@ This section shows how we can extend the code to download files from other custo
      
   ``` 
   
-### Adding Unit Tests 
-Unit Tests are added covering
-* File Utils **[Utility file for file downlaods]**
-* Download Service Layer **[making Sure downloads are done in parallel]**
-* Download Manager **[Along with Retry Logic]**
-* Exception Cases like **MalformedURLException, IOException**
+###Adding Unit Tests 
+Unit Tests are added covering  **(Note: For test cases, active internet connection is needed for a few cases)**
+* File Utils [Utility file for file downlaods]
+* Download Service Layer [making Sure downloads are done in parallel]
+* Download Manager [Along with Retry Logic]
+* Exception Cases like MalformedURLException, IOException
 * Custom Test Cases could be added to test custom protocols.
